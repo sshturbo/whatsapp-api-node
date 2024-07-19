@@ -77,6 +77,13 @@ read -p "Insira a AUTHENTICATION_API_KEY: " AUTHENTICATION_API_KEY
 # Solicita ao usuário inserir a porta
 read -p "Insira a porta para mapeamento (ex. 21444): " PORT
 
+# Verifica se o contêiner Docker já está em execução e remove-o
+if [ $(docker ps -q -f name=whats-webhostpro) ]; then
+    show_progress "Parando e removendo contêiner Docker existente"
+    docker stop whats-webhostpro || exit_with_error "Falha ao parar contêiner Docker existente"
+    docker rm whats-webhostpro || exit_with_error "Falha ao remover contêiner Docker existente"
+fi
+
 # Executa o comando Docker com os parâmetros fornecidos pelo usuário
 show_progress "Executando o contêiner Docker"
 docker run -d \
@@ -87,6 +94,19 @@ docker run -d \
     -v evolution_store:/evolution/store \
     -v evolution_instances:/evolution/instances \
     atendai/evolution-api || exit_with_error "Falha ao executar o contêiner Docker"
+
+# Verifica se o aplicativo PM2 já está em execução e remove-o
+if pm2 list | grep -q "whatsapp-api"; then
+    show_progress "Parando e removendo aplicativo PM2 existente"
+    pm2 stop whatsapp-api || exit_with_error "Falha ao parar aplicativo PM2 existente"
+    pm2 delete whatsapp-api || exit_with_error "Falha ao remover aplicativo PM2 existente"
+fi
+
+# Verifica se o diretório do projeto já existe e remove-o
+if [ -d "whatsapp-api-node" ]; then
+    show_progress "Removendo diretório do projeto existente"
+    rm -rf whatsapp-api-node || exit_with_error "Falha ao remover diretório do projeto existente"
+fi
 
 show_progress "Clonando repositório"
 git clone https://github.com/sshturbo/whatsapp-api-node.git || exit_with_error "Falha ao clonar repositório"
@@ -112,3 +132,4 @@ pm2 start npm --name "whatsapp-api" -- start || exit_with_error "Falha ao inicia
 echo "------------------------------------------"
 echo "- Instalação concluída e aplicação iniciada"
 echo "------------------------------------------"
+
