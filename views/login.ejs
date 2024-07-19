@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+	<meta name="description" content="Api Whatsapp">
+	<meta name="Jefferson" content="WebHostPro">
+	<link rel="icon"
+		href="https://cdn.discordapp.com/attachments/1101332090609479731/1154943221068206130/baf8ac55-nova-imagem-do-whatsapp-b-removebg-preview.png"
+		type="image/x-icon" />
+	<title>Api Whatsapp</title>
+	<link id="style" href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="assets/plugins/web-fonts/icons.css" rel="stylesheet" />
+	<link href="assets/plugins/web-fonts/font-awesome/font-awesome.min.css" rel="stylesheet">
+	<link href="assets/plugins/web-fonts/plugin.css" rel="stylesheet" />
+	<link href="assets/css/style.css" rel="stylesheet">
+	<link href="assets/plugins/notify/css/notifIt.css" rel="stylesheet" />
+</head>
+
+<body class="ltr main-body leftmenu error-1 dark-theme">
+	<div id="global-loader">
+		<img src="assets/img/loader.svg" class="loader-img" alt="Loader">
+	</div>
+	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script>
+	<div class="page main-signin-wrapper">
+		<div class="row signpages text-center">
+			<div class="col-md-12">
+				<div class="card">
+					<div class="row row-sm">
+						<div class="col-lg-6 col-xl-5 d-none d-lg-block text-center bg-primary details">
+							<div class="mt-5 pt-4 p-2 pos-absolute">
+								<img src="https://cdn.discordapp.com/attachments/1101332090609479731/1154943221068206130/baf8ac55-nova-imagem-do-whatsapp-b-removebg-preview.png"
+									class="d-lg-none header-brand-img text-start float-start mb-4 error-logo-light"
+									alt="logo">
+								<img src="https://cdn.discordapp.com/attachments/1101332090609479731/1154943221068206130/baf8ac55-nova-imagem-do-whatsapp-b-removebg-preview.png"
+									class=" d-lg-none header-brand-img text-start float-start mb-4 error-logo"
+									alt="logo">
+								<div class="clearfix"></div>
+								<img src="assets/img/svgs/user.svg" class="ht-100 mb-0" alt="user">
+								<h5 class="mt-4 text-white">Acesse Agora Nossa Api Do Whatsapp</h5>
+								<span class="tx-white-6 tx-13 mb-5 mt-xl-0">Explore a nossa API do WhatsApp e
+									desbloqueie um mundo de possibilidades de comunicação. Conecte-se com os seus
+									clientes de forma mais eficiente e eficaz. Com preços super acessíveis, você terá
+									todas as ferramentas necessárias para melhorar a interação com o seu público. Não
+									perca esta oportunidade, comece agora!</span>
+							</div>
+						</div>
+						<div class="col-lg-6 col-xl-7 col-xs-12 col-sm-12 login_form ">
+							<div class="main-container container-fluid">
+								<div class="row row-sm">
+									<div class="card-body mt-2 mb-2">
+										<div class="clearfix"></div>
+										<form method="POST" action="login" onsubmit="return checkCaptcha()">
+											<h5 class="text-start mb-2">API WHATSAPP</h5>
+											<p class="mb-4 text-muted tx-13 ms-0 text-start">Entre com sua conta para
+												melhor experiencia</p>
+											<div class="form-group text-start">
+												<label>Email</label>
+												<input class="form-control" placeholder="Insira Seu Email" type="email"
+													name="email">
+											</div>
+											<div class="form-group text-start">
+												<label>Senha</label>
+												<input class="form-control" placeholder="Insira Sua Senha"
+													type="password" name="senha">
+											</div>
+											<button class="btn ripple btn-main-primary btn-block">Entrar</button>
+										</form>
+										<div class="text-start mt-5 ms-0">
+											<!-- <div class="mb-1"><a href="">Forgot password?</a></div> -->
+											<div>Não Possui uma Conta? <a href="cadastrar">Criar Conta</a></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="./assets/plugins/jquery/jquery.min.js"></script>
+
+	<script src="assets/plugins/bootstrap/js/popper.min.js"></script>
+	<script src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+
+	<script src="assets/plugins/select2/js/select2.min.js"></script>
+	<script src="assets/js/select2.js"></script>
+	<script src="assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+	<script src="assets/js/themeColors.js"></script>
+	<script src="assets/js/custom.js"></script>
+	<script src="assets/plugins/notify/js/notifit-custom.js"></script>
+	<script src="assets/plugins/notify/js/notifIt.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script>
+		// Capturar as mensagens da URL (se houver)
+		const urlParams = new URLSearchParams(window.location.search);
+		const msg = urlParams.get('msg');
+		const tipo = urlParams.get('tipo'); // 'sucesso' ou 'erro'
+
+		if (msg) {
+			Swal.fire({
+				title: tipo === 'sucesso' ? 'Sucesso!' : 'Erro!',
+				text: msg,
+				icon: tipo === 'sucesso' ? 'success' : 'error',
+				confirmButtonText: 'OK'
+			});
+		}
+	</script>
+
+</body>
+
+</html>

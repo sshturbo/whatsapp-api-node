@@ -1,0 +1,162 @@
+<%- include('header') %>
+    <div class="card bg-primary custom-card card-box">
+        <a href="./sessoes">
+            <div class="card-body p-4" href="home">
+                <div class="row align-items-center">
+                    <div class="offset-xl-3 offset-sm-6 col-xl-8 col-sm-6 col-12 ">
+                        <h4 class="d-flex  mb-3"> <span class="font-weight-bold text-white ">Olá
+                                <%= nome %>
+                            </span> </h4>
+                        <p class="tx-white-7 mb-1">Adiquira agora o plano gratuito e aproveite as vantagens! </p>
+                    </div>
+                    <img src="../assets/img/pngs/work3.png" alt="user-img">
+                </div>
+            </div>
+    </div>
+    <!-- Row -->
+    </a>
+    <div class="container-fluid">
+        <div class="row row-sm">
+            <div class="col-sm-6 col-md-6 col-xl-4">
+                <div class="card custom-card">
+                    <div class="card-body text-center">
+                        <div class="icon-service bg-primary-transparent rounded-circle text-primary">
+                            <i class="fe fe-user"></i>
+                        </div>
+                        <p class="mb-1 text-muted">Membros</p>
+                        <h3 id="membros" class="mb-0">Carregando...</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6 col-xl-4">
+                <div class="card custom-card">
+                    <div class="card-body text-center">
+                        <div class="icon-service bg-secondary-transparent rounded-circle text-secondary">
+                            <i class="fe fe-trending-up"></i>
+                        </div>
+                        <p class="mb-1 text-muted">Total de Sessões</p>
+                        <h3 id="totalsessoes" class="mb-0">Carregando...</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6 col-xl-4">
+                <div class="card custom-card">
+                    <div class="card-body text-center">
+                        <div class="icon-service bg-success-transparent rounded-circle text-success">
+                            <i class="fe fe-shopping-cart"></i>
+                        </div>
+                        <p class="mb-1 text-muted">Suas Sessões</p>
+                        <h3 id="sessoes" class="mb-0">Carregando...</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row row-sm">
+        <div class="col-lg-12">
+            <div class="card custom-card">
+                <div class="card-header border-bottom-0 custom-card-header">
+                    <h6 class="main-content-label mb-0">Tutorial Basico de Uso</h6>
+                </div>
+                <div class="card-body">
+                    <div class="vtimeline">
+                        <div class="timeline-wrapper timeline-wrapper-primary">
+                            <div class="timeline-badge"></div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h6 class="timeline-title">Contrate um plano</h6>
+                                </div>
+                                <div class="timeline-body">
+                                    <p>Adiquira o plano gratuito.</p>
+                                </div>
+                                <div class="timeline-footer d-flex align-items-center flex-wrap">
+                                    <span class="ms-md-auto"><i class="fe fe-calendar text-muted me-1"></i>
+                                        <script>document.write(new Date().toLocaleDateString('pt-BR'));</script>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-wrapper timeline-inverted timeline-wrapper-secondary">
+                            <div class="timeline-badge"></div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h6 class="timeline-title">Token e Api</h6>
+                                </div>
+                                <div class="timeline-body">
+                                    <p>Copie o token e a api e cole no seu programa</p>
+                                </div>
+                                <div class="timeline-footer d-flex align-items-center flex-wrap">
+                                    <span class="ms-md-auto"><i class="fe fe-calendar text-muted me-1"></i>
+                                        <script>document.write(new Date().toLocaleDateString('pt-BR'));</script>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-wrapper timeline-wrapper-info">
+                            <div class="timeline-badge"></div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h6 class="timeline-title">Conecte o seu WhatsApp</h6>
+                                </div>
+                                <div class="timeline-body">
+                                    <p>Conecte o WhatsApp escaneando o QRCode</p>
+                                </div>
+                                <div class="timeline-footer d-flex align-items-center flex-wrap">
+                                    <span class="ms-md-auto"><i class="fe fe-calendar text-muted me-1"></i>
+                                        <script>document.write(new Date().toLocaleDateString('pt-BR'));</script>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-wrapper timeline-inverted timeline-wrapper-success">
+                            <div class="timeline-badge"></div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h6 class="timeline-title">E tudo pronto!</h6>
+                                </div>
+                                <div class="timeline-body">
+                                    <p>Basta usar sua api e token para enviar mensagens</p>
+
+                                </div>
+                                <div class="timeline-footer d-flex align-items-center flex-wrap">
+                                    <span class="ms-md-auto"><i class="fe fe-calendar text-muted me-1"></i>
+                                        <script>document.write(new Date().toLocaleDateString('pt-BR'));</script>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('footer') %>
+
+        <script>
+            // Função para carregar as estatísticas da rota /estatisticas
+            async function carregarEstatisticas() {
+                try {
+                    const response = await fetch('/estatisticas');
+                    if (!response.ok) {
+                        throw new Error('Erro ao carregar estatísticas');
+                    }
+                    const data = await response.json();
+
+                    // Atualiza o conteúdo da página com as estatísticas recebidas
+                    document.getElementById('membros').textContent = data.quantidadeUsuarios;
+                    document.getElementById('totalsessoes').textContent = data.quantidadeInstancias;
+                    document.getElementById('sessoes').textContent = data.quantidadeInstanciasUsuario;
+                } catch (error) {
+                    console.error('Erro ao carregar estatísticas:', error.message);
+                    // Caso ocorra um erro, você pode lidar com ele aqui
+                }
+            }
+
+            // Chama a função para carregar estatísticas assim que a página carregar
+            document.addEventListener('DOMContentLoaded', () => {
+                carregarEstatisticas();
+            });
+        </script>

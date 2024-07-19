@@ -1,0 +1,151 @@
+<%- include('header') %>
+	<link href="assets/plugins/sweet-alert/sweetalert.css" rel="stylesheet">
+	<script src="assets/plugins/sweet-alert/sweetalert.min.js"></script>
+	<script src="assets/plugins/sweet-alert/jquery.sweet-alert.js"></script>
+	<div class="row square">
+		<div class="col-lg-12 col-md-12">
+			<div class="card custom-card">
+				<div class="card-body">
+					<div class="panel profile-cover">
+						<div class="profile-cover__img">
+							<img src="assets/img/users/1.png" alt="img" />
+							<h3 class="h3">
+								<%= nome %>
+							</h3>
+						</div>
+						<div class="profile-cover__action bg-img"></div>
+						<div class="profile-cover__info">
+							<ul class="nav">
+								<li>
+									<p id="sessoes"></p>
+									</p><strong></strong>Sessões
+								</li>
+							</ul>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Row -->
+	<div class="row row-sm">
+		<div class="col-lg-12 col-md-12">
+			<div class="card custom-card main-content-body-profile">
+				<div class="tab-content">
+					<div class="main-content-body tab-pane p-4 border-top-0 active" id="about">
+						<div class="card-body border">
+							<div class="mb-4 main-content-label">Conta</div>
+							<form class="form-horizontal" action="./atualizar" method="POST">
+								<div class="mb-4 main-content-label">Editar Seus Dados</div>
+								<div class="form-group ">
+									<div class="row row-sm">
+										<div class="col-md-3">
+											<label class="form-label">Nome</label>
+										</div>
+										<div class="col-md-9">
+											<input type="text" class="form-control" name="nome" required=""
+												placeholder="Seu nome" value="<%= nome %>">
+										</div>
+									</div>
+								</div>
+								<div class="form-group ">
+									<div class="row row-sm">
+										<div class="col-md-3">
+											<label class="form-label">Email</label>
+										</div>
+										<div class="col-md-9">
+											<input class="form-control" placeholder="Input box (success state)"
+												name="email" required="" type="email" value="<%= email %>">
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row row-sm">
+										<div class="col-md-3">
+											<label class="form-label">Senha</label>
+										</div>
+										<div class="col-md-9">
+											<input type="password" class="form-control" placeholder="Sua Senha"
+												name="senha" value="" id="senhaInput" autocomplete="off">
+											<br>
+											<div class="col-lg-3 mg-t-20 mg-lg-t-0">
+												<label class="ckbox"><input id="mostrarSenhaBtn"
+														type="checkbox"><span>Mostrar Senha</span></label>
+											</div>
+											<br>
+											<button class="btn ripple btn-outline-success">Salvar</button>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Row -->
+	</div>
+	</div>
+	</div>
+
+	<%- include('footer') %>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<script>
+			// Capturar as mensagens da URL (se houver)
+			const urlParams = new URLSearchParams(window.location.search);
+			const msg = urlParams.get('msg');
+			const tipo = urlParams.get('tipo'); // 'sucesso' ou 'erro'
+
+			if (msg) {
+				Swal.fire({
+					title: tipo === 'sucesso' ? 'Sucesso!' : 'Erro!',
+					text: msg,
+					icon: tipo === 'sucesso' ? 'success' : 'error',
+					confirmButtonText: 'OK'
+				});
+			}
+		</script>
+		<script>
+			// Função para carregar as estatísticas da rota /estatisticas
+			async function carregarEstatisticas() {
+				try {
+					const response = await fetch('/estatisticas');
+					if (!response.ok) {
+						throw new Error('Erro ao carregar estatísticas');
+					}
+					const data = await response.json();
+
+					// Atualiza o conteúdo da página com as estatísticas recebidas
+					document.getElementById('sessoes').textContent = data.quantidadeInstanciasUsuario;
+				} catch (error) {
+					console.error('Erro ao carregar estatísticas:', error.message);
+					// Caso ocorra um erro, você pode lidar com ele aqui
+				}
+			}
+
+			// Chama a função para carregar estatísticas assim que a página carregar
+			document.addEventListener('DOMContentLoaded', () => {
+				carregarEstatisticas();
+			});
+		</script>
+		<script>
+			function alternarTipoSenha() {
+				var senhaInput = document.getElementById('senhaInput');
+				var mostrarSenhaBtn = document.getElementById('mostrarSenhaBtn');
+
+				if (senhaInput.type === 'password') {
+					senhaInput.type = 'text';
+					mostrarSenhaBtn.textContent = 'Ocultar Senha';
+				} else {
+					senhaInput.type = 'password';
+					mostrarSenhaBtn.textContent = 'Mostrar Senha';
+				}
+			}
+
+			var mostrarSenhaBtn = document.getElementById('mostrarSenhaBtn');
+			mostrarSenhaBtn.addEventListener('click', alternarTipoSenha);
+		</script>
