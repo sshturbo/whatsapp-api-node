@@ -1,0 +1,32 @@
+{
+  "name": "api-whstsapp",
+  "version": "1.0.1",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "pm2 start dist/app.js --name whats",
+    "build": "mkdirp dist && uglifyjs src/app.js -o dist/app.js && npm run obfuscate",
+    "obfuscate": "javascript-obfuscator dist/app.js --output dist/app.js",
+    "dev": "node src/app.js"
+  },
+  "keywords": [],
+  "author": "Jefferson Hipolito",
+  "license": "ISC",
+  "description": "Api do whatsapp com a biblioteca evolution",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "fs": "^0.0.1-security",
+    "randomstring": "^1.3.0",
+    "sqlite3": "^5.1.7",
+    "uuid": "^10.0.0",
+    "validator": "^13.12.0"
+  },
+  "devDependencies": {
+    "javascript-obfuscator": "^4.1.1",
+    "mkdirp": "^3.0.1",
+    "uglify-js": "^3.18.0"
+  }
+}

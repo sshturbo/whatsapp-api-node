@@ -1,0 +1,327 @@
+<%- include('header') %>
+    <link href="../assets/plugins/sweet-alert/sweetalert.css" rel="stylesheet">
+    <script src="../assets/plugins/sweet-alert/sweetalert.min.js"></script>
+    <script src="../assets/plugins/sweet-alert/jquery.sweet-alert.js"></script>
+
+    <div class="row row-sm">
+        <div class="col-lg-12">
+            <div class="card custom-card">
+                <div class="card-body">
+                    <div>
+                        <h6 class="main-content-label mb-1">Sessões</h6>
+                        <p class="text-muted card-sub-title">Aqui você pode ver suas sessões</p>
+                        <!-- Botão para abrir modal de criação de instância -->
+                        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal"
+                            data-bs-target="#criarInstanciaModal">
+                            Criar Nova Instância
+                        </button>
+                    </div>
+                    <div class="table-responsive border">
+                        <table class="table text-nowrap text-md-nowrap table-striped mg-b-0">
+                            <thead>
+                                <tr>
+                                    <th>Token</th>
+                                    <th>Status</th>
+                                    <th>Instância</th>
+                                    <th>Número</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dadosTabela">
+                                <!-- Dados serão inseridos aqui dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para criar instância do WhatsApp -->
+    <div class="modal" id="criarInstanciaModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Criar Nova Instância do WhatsApp</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formCriarInstancia">
+                        <div class="mb-3">
+                            <label for="numeroInput" class="form-label">Número de Telefone</label>
+                            <input type="text" class="form-control" id="numeroInput" name="numero"
+                                placeholder="Digite o número de telefone">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" id="criarInstanciaBtn">Criar Instância</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para exibir QR Code e pairingCode -->
+    <div class="modal" id="qrCodeModal">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">QR Code para Conexão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="qrCodeImage" src="" alt="QR Code" class="img-fluid">
+                    <div id="pairingCodeContainer" class="pairing-code-container">
+                        <!-- Pairing Code será inserido aqui dinamicamente -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('footer') %>
+        <script>
+            $(document).ready(function () {
+                // Função para mostrar alerta usando SweetAlert
+                function mostrarAlerta(type, message) {
+                    swal({
+                        title: '',
+                        text: message,
+                        icon: type,
+                        button: 'OK',
+                    });
+                }
+
+                // Copiar Chave API
+                $('.copiarchave').click(function () {
+                    var realToken = $(this).data('real-token');
+                    var $temp = $("<input>");
+                    $("body").append($temp);
+                    $temp.val(realToken).select();
+                    document.execCommand("copy");
+                    $temp.remove();
+                    mostrarAlerta('success', 'Token API copiado com sucesso!');
+                });
+
+                // Copiar Token API
+                $('.copiartoken').click(function () {
+                    var realToken = $(this).data('real-token');
+                    var $temp = $("<input>");
+                    $("body").append($temp);
+                    $temp.val(realToken).select();
+                    document.execCommand("copy");
+                    $temp.remove();
+                    mostrarAlerta('success', 'Chave API copiada com sucesso!');
+                });
+
+                // Abrir modal para criar instância do WhatsApp ao clicar no botão
+                $('#criarInstanciaBtn').click(function () {
+                    var numero = $('#numeroInput').val();
+                    if (!numero) {
+                        mostrarAlerta('error', 'Por favor, insira o número de telefone.');
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/criar-instancia-whatsapp',
+                        type: 'POST',
+                        data: { numero: numero },
+                        success: function (response) {
+                            // Exibir mensagem de sucesso
+                            mostrarAlerta('success', 'Instância do WhatsApp criada com sucesso!');
+                            location.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            mostrarAlerta('error', 'Erro ao criar instância do WhatsApp.');
+                            console.error('Erro ao criar instância do WhatsApp:', error);
+                        }
+                    });
+                });
+
+                function carregarDadosWhatsApp() {
+                    $.ajax({
+                        url: '/dados-whatsapp',
+                        type: 'GET',
+                        success: function (response) {
+                            var tabela = $('#dadosTabela');
+                            tabela.empty(); // Limpa a tabela antes de inserir novos dados
+
+                            if (response.dados) {
+                                var dados = response.dados;
+
+                                var linha = `
+                    <tr>
+                        <td>${dados.token}</td>
+                        <td>${dados.status}</td>
+                        <td>${dados.instancia}</td>
+                        <td>${dados.numero}</td>
+                        <td>
+                            <button class="btn btn-primary conectar" 
+                                data-token="${dados.token}" 
+                                data-numero="${dados.numero}" 
+                                data-instancia="${dados.instancia}">Conectar</button>
+                            <button class="btn btn-danger excluir" 
+                                data-token="${dados.token}" 
+                                data-numero="${dados.numero}" 
+                                data-instancia="${dados.instancia}">Excluir</button>
+                        </td>
+                    </tr>
+                `;
+                                tabela.append(linha);
+                            } else {
+                                var linhaErro = `
+                    <tr>
+                        <td colspan="5">Nenhuma instância do WhatsApp encontrada.</td>
+                    </tr>
+                `;
+                                tabela.append(linhaErro);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            if (xhr.status === 404) {
+                                var tabela = $('#dadosTabela');
+                                tabela.empty(); // Limpa a tabela antes de inserir a mensagem de erro
+
+                                var linhaErro = `
+                    <tr>
+                        <td colspan="5">Nenhuma Instância do WhatsApp encontrada.</td>
+                    </tr>
+                `;
+                                tabela.append(linhaErro);
+                            } else {
+                                mostrarAlerta('error', 'Erro ao recuperar dados do WhatsApp.');
+                                console.error('Erro ao recuperar dados do WhatsApp:', error);
+                            }
+                        }
+                    });
+                }
+
+
+                // Função para conectar ao WhatsApp
+                $(document).on('click', '.conectar', function () {
+                    var token = $(this).data('token');
+                    var numero = $(this).data('numero');
+                    var instancia = $(this).data('instancia');
+
+                    // Enviar requisição para conectar ao WhatsApp
+                    $.ajax({
+                        url: '/conectar-whatsapp',
+                        type: 'POST',
+                        data: { token: token, numero: numero, instancia: instancia },
+                        success: function (response) {
+                            // Verificar se retornou mensagem de sucesso
+                            if (response.message) {
+                                // WhatsApp já foi conectado com sucesso
+                                mostrarAlerta('success', response.message);
+                                $('#qrCodeModal').modal('hide'); // Ocultar modal de QR Code
+                                return;
+                            }
+
+                            // Exibir modal com QR Code e pairingCode
+                            $('#qrCodeImage').attr('src', 'data:image/png;base64,' + response.base64);
+                            exibirPairingCode(response.pairingCode);
+                            $('#qrCodeModal').modal('show');
+
+                            // Verificar estado de conexão a cada segundo
+                            var intervalo = setInterval(function () {
+                                $.ajax({
+                                    url: '/verificar-conexao-whatsapp',
+                                    type: 'POST',
+                                    data: { token: token, instancia: instancia },
+                                    success: function (res) {
+                                        console.log('Resposta da verificação de conexão:', res); // Debugging
+
+                                        if (JSON.stringify(res) === JSON.stringify({ mensagem: 'Whatsapp conectado com sucesso!' })) {
+                                            // WhatsApp conectado, ocultar QR Code e Pairing-Code
+                                            $('#qrCodeModal').modal('hide');
+
+                                            // Exibir mensagem de sucesso
+                                            mostrarAlerta('success', 'WhatsApp conectado com sucesso!');
+                                            clearInterval(intervalo); // Parar verificação
+                                        }
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.error('Erro ao verificar conexão do WhatsApp:', error);
+                                    }
+                                });
+                            }, 1000); // Verificar a cada segundo
+                        },
+                        error: function (xhr, status, error) {
+                            mostrarAlerta('error', 'Erro ao conectar ao WhatsApp.');
+                            console.error('Erro ao conectar ao WhatsApp:', error);
+                        }
+                    });
+                });
+
+                // Função para excluir instância do WhatsApp
+                $(document).on('click', '.excluir', function () {
+                    var token = $(this).data('token');
+                    var instancia = $(this).data('instancia');
+
+                    // Confirmar exclusão com o usuário
+                    if (!confirm('Tem certeza que deseja excluir esta instância do WhatsApp?')) {
+                        return; // Aborta se o usuário cancelar
+                    }
+
+                    // Dados a serem enviados
+                    var requestData = {
+                        token: token,
+                        instancia: instancia
+                    };
+
+                    // Requisição AJAX para excluir a instância
+                    $.ajax({
+                        url: '/excluir-instancia-whatsapp',
+                        type: 'POST',
+                        data: requestData,
+                        success: function (response) {
+                            // Exibição de alerta de sucesso e recarregar a página
+                            mostrarAlerta('success', 'Instância do WhatsApp excluída com sucesso!');
+                            location.reload(); // Recarrega a página após exclusão
+                        },
+                        error: function (xhr, status, error) {
+                            // Exibição de alerta de erro
+                            mostrarAlerta('error', 'Erro ao excluir instância do WhatsApp.');
+                            console.error('Erro ao excluir instância do WhatsApp:', error);
+                        }
+                    });
+                });
+
+
+                // Chama a função para carregar os dados ao carregar a página
+                carregarDadosWhatsApp();
+            });
+
+            // Função para exibir o pairingCode com blocos numerados
+            function exibirPairingCode(pairingCode) {
+                var pairingCodeContainer = $('#pairingCodeContainer');
+                pairingCodeContainer.empty();
+
+                // Dividir o pairingCode em duas partes
+                var primeiraParte = pairingCode.substring(0, 4);
+                var segundaParte = pairingCode.substring(4);
+
+                // Criar os blocos para a primeira parte
+                for (var i = 0; i < primeiraParte.length; i++) {
+                    var letraOuNumero = primeiraParte[i];
+                    var bloco = $('<div class="pairing-code-block">' + letraOuNumero + '</div>');
+
+                    pairingCodeContainer.append(bloco);
+                }
+
+                // Adicionar o separador "-"
+                pairingCodeContainer.append('<div class="pairing-code-separator">-</div>');
+
+                // Criar os blocos para a segunda parte
+                for (var j = 0; j < segundaParte.length; j++) {
+                    var letraOuNumero = segundaParte[j];
+                    var bloco = $('<div class="pairing-code-block">' + letraOuNumero + '</div>');
+
+                    pairingCodeContainer.append(bloco);
+                }
+            }
+        </script>
