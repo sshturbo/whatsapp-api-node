@@ -43,7 +43,7 @@ fi
 # Verifica se o Node.js versão 20 está instalado
 node --version | grep "v20" >/dev/null 2>&1
 NODE_INSTALLED=$?
-if [ $NODE_INSTALLED -ne 0]; then
+if [ $NODE_INSTALLED -ne 0 ]; then
     show_progress "Instalando Node.js 20 e PM2"
     curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - >/dev/null 2>&1 || exit_with_error "Falha ao configurar o repositório do Node.js"
     sudo apt update >/dev/null 2>&1 || exit_with_error "Falha ao atualizar o apt"
