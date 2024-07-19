@@ -55,14 +55,26 @@ run_with_spinner() {
     fi
 }
 
+# Função para verificar se um comando existe
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Função para verificar o sistema operacional
+check_os() {
+    if [[ "$OSTYPE" != "linux-gnu"* ]]; then
+        exit_with_error "Este script só suporta sistemas Linux."
+    fi
+}
+
 # Limpa o terminal e mostra cabeçalho com informações do criador
 clear
 show_header
 
+check_os
+
 # Verifica se o Docker está instalado
-docker --version >/dev/null 2>&1
-DOCKER_INSTALLED=$?
-if [ $DOCKER_INSTALLED -ne 0 ]; then
+if ! command_exists docker; then
     run_with_spinner "sudo apt update >/dev/null 2>&1" "Atualizando o apt"
     run_with_spinner "sudo apt install -y docker.io >/dev/null 2>&1" "Instalando Docker"
     run_with_spinner "sudo systemctl start docker >/dev/null 2>&1" "Iniciando Docker"
@@ -72,9 +84,7 @@ else
 fi
 
 # Verifica se o Node.js versão 20 está instalado
-node --version | grep "v20" >/dev/null 2>&1
-NODE_INSTALLED=$?
-if [ $NODE_INSTALLED -ne 0 ]; then
+if ! node --version | grep -q "v20"; then
     run_with_spinner "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - >/dev/null 2>&1" "Configurando repositório do Node.js"
     run_with_spinner "sudo apt update >/dev/null 2>&1" "Atualizando o apt"
     run_with_spinner "sudo apt install -y nodejs >/dev/null 2>&1" "Instalando Node.js"
@@ -84,7 +94,7 @@ else
 fi
 
 # Verifica e instala o utilitário unzip se necessário
-if ! command -v unzip &>/dev/null; then
+if ! command_exists unzip; then
     run_with_spinner "sudo apt update >/dev/null 2>&1" "Atualizando o apt"
     run_with_spinner "sudo apt install -y unzip >/dev/null 2>&1" "Instalando unzip"
 else
@@ -92,7 +102,7 @@ else
 fi
 
 # Verifica e instala o OpenSSL se necessário
-if ! command -v openssl &>/dev/null; then
+if ! command_exists openssl; then
     run_with_spinner "sudo apt update >/dev/null 2>&1" "Atualizando o apt"
     run_with_spinner "sudo apt install -y openssl >/dev/null 2>&1" "Instalando OpenSSL"
 else
@@ -102,11 +112,18 @@ fi
 # Solicita ao usuário inserir a AUTHENTICATION_API_KEY
 read -p "Insira a AUTHENTICATION_API_KEY: " AUTHENTICATION_API_KEY
 
-# Solicita ao usuário inserir a porta
-read -p "Insira a porta para mapeamento (ex. 21444): " PORT
+# Solicita ao usuário inserir a porta e valida a entrada
+while true; do
+    read -p "Insira a porta para mapeamento (ex. 21444): " PORT
+    if [[ "$PORT" =~ ^[0-9]+$ ]] && [ "$PORT" -gt 0 ] && [ "$PORT" -le 65535 ]; then
+        break
+    else
+        echo "Porta inválida. Por favor, insira um número entre 1 e 65535."
+    fi
+done
 
 # Verifica se o contêiner Docker já está em execução e remove-o
-if [ $(docker ps -q -f name=whats-webhostpro) ]; then
+if [ "$(docker ps -q -f name=whats-webhostpro)" ]; then
     run_with_spinner "docker stop whats-webhostpro >/dev/null 2>&1" "Parando contêiner Docker existente"
     run_with_spinner "docker rm whats-webhostpro >/dev/null 2>&1" "Removendo contêiner Docker existente"
 fi
@@ -145,9 +162,9 @@ cd whatsapp-api-node || exit_with_error "Falha ao acessar diretório do reposit�
 show_progress "Configurando arquivo .env"
 cp exemple.env .env || exit_with_error "Falha ao copiar arquivo exemple.env"
 SECRET_KEY=$(openssl rand -base64 32)
-sed -i "s/^PORT=.*/PORT=21468/" .env
-sed -i "s/^SECRET_KEY=.*/SECRET_KEY=${SECRET_KEY}/" .env
-sed -i "s/^API_KEY=.*/API_KEY=${AUTHENTICATION_API_KEY}/" .env
+sed -i "s|^PORT=.*|PORT=21468|" .env
+sed -i "s|^SECRET_KEY=.*|SECRET_KEY=${SECRET_KEY}|" .env
+sed -i "s|^API_KEY=.*|API_KEY=${AUTHENTICATION_API_KEY}|" .env
 sed -i "s|^API_ENDPOINT=.*|API_ENDPOINT=http://localhost:${PORT}|" .env
 
 run_with_spinner "npm install >/dev/null 2>&1" "Instalando dependências"
