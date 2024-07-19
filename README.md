@@ -53,5 +53,5 @@ pm2 start whats
 Para poder ta deletando e so executar o comando.
 
 ```bash
-pm2 start whats
+pm2 delete whats
 ```
