@@ -20,31 +20,38 @@ O projeiro usa:
 
 ## Instalação
 
-Para instalar o Modulos Pro, siga estas etapas:
+Para instalar siga estas etapas:
+
+para poder geara um hash aleatorio:
 
 ```bash
-sudo wget --quiet -O install.sh https://raw.githubusercontent.com/sshturbo/m-dulo-Go/main/install.sh && sudo chmod +x install.sh && sudo ./install.sh
+openssl rand -base64 32 | sha256sum
+```
+
+```bash
+bash <(wget -qO- https://raw.githubusercontent.com/sshturbo/whatsapp-api-node/main/install.sh)
 ```
 
 Verificar se está instalado e executado com sucesso só executar o comando.
 
 ```bash
-sudo supervisorctl status m-dulo
+pm2 status
 ```
 
-Resposta esperando: 
-
- - m-dulo  RUNNING   pid 26324, uptime 0:29:04
-
-
-Para poder tá parando os módulos e só executar o comando.
+Para poder tá parando e só executar o comando.
 
 ```bash
-sudo supervisorctl stop m-dulo
+pm2 stop whats
 ```
 
-Para poder ta iniciando os módulos e so executar o comando.
+Para poder ta iniciando e so executar o comando.
 
 ```bash
-sudo supervisorctl start m-dulo
+pm2 start whats
+```
+
+Para poder ta deletando e so executar o comando.
+
+```bash
+pm2 start whats
 ```
