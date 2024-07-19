@@ -146,9 +146,9 @@ if [ $? -ne 0 ]; then
 fi
 
 # Verifica se o aplicativo PM2 já está em execução e remove-o
-if pm2 list | grep -q "whatsapp-api"; then
-    run_with_spinner "pm2 stop whatsapp-api >/dev/null 2>&1" "Parando aplicativo PM2 existente"
-    run_with_spinner "pm2 delete whatsapp-api >/dev/null 2>&1" "Removendo aplicativo PM2 existente"
+if pm2 list | grep -q "whats"; then
+    run_with_spinner "pm2 stop whats >/dev/null 2>&1" "Parando aplicativo PM2 existente"
+    run_with_spinner "pm2 delete whats >/dev/null 2>&1" "Removendo aplicativo PM2 existente"
 fi
 
 # Verifica se o diretório do projeto já existe e remove-o
@@ -169,7 +169,7 @@ sed -i "s|^API_ENDPOINT=.*|API_ENDPOINT=http://localhost:${PORT}|" .env
 
 run_with_spinner "npm install >/dev/null 2>&1" "Instalando dependências"
 run_with_spinner "npm run build >/dev/null 2>&1" "Construindo aplicação"
-run_with_spinner "pm2 start npm --name 'whatsapp-api' -- start >/dev/null 2>&1" "Iniciando aplicação"
+run_with_spinner "npm start >/dev/null 2>&1" "Iniciando aplicação"
 
 echo "------------------------------------------"
 echo "- Instalação concluída e aplicação iniciada"
