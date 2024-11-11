@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "main": "src/app.js",
   "scripts": {
-    "start": "pm2 start dist/app.js --name whats",
+    "start": "pm2 start src/app.js --name whats",
     "build": "mkdirp dist && uglifyjs src/app.js -o dist/app.js && npm run obfuscate",
     "obfuscate": "javascript-obfuscator dist/app.js --output dist/app.js",
     "dev": "node src/app.js"
