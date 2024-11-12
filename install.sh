@@ -93,7 +93,7 @@ else
 fi
 
 # Verifica se o Node.js versão 20 está instalado
-if ! node --version | grep -q "v20"; then
+if ! command -v node &> /dev/null || ! node --version | grep -q "v20"; then
     run_with_spinner "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - >/dev/null 2>&1" "Configurando repositório do Node.js"
     run_with_spinner "sudo apt update >/dev/null 2>&1" "Atualizando o apt"
     run_with_spinner "sudo apt install -y nodejs >/dev/null 2>&1" "Instalando Node.js"
@@ -101,6 +101,7 @@ if ! node --version | grep -q "v20"; then
 else
     show_progress "Node.js 20 e PM2 já estão instalados"
 fi
+
 
 # Verifica e instala o utilitário unzip se necessário
 if ! command_exists unzip; then
