@@ -176,7 +176,11 @@ run_with_spinner "npm install >/dev/null 2>&1" "Instalando dependências"
 run_with_spinner "npm run build >/dev/null 2>&1" "Construindo aplicação"
 run_with_spinner "npm start >/dev/null 2>&1" "Iniciando aplicação"
 
-cd evolution || exit_with_error "Falha ao acessar diretório do repositório"
+if [ -d "evolution" ]; then
+    cd evolution || exit_with_error "Falha ao acessar diretório do repositório"
+else
+    exit_with_error "Diretório evolution não encontrado"
+fi
 
 # Modifica o arquivo docker-compose.yml com a porta fornecida pelo usuário
 show_progress "Modificando a porta da evolution para $PORT"
