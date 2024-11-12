@@ -123,26 +123,9 @@ while true; do
 done
 
 # Verifica se o contêiner Docker já está em execução e remove-o
-if [ "$(docker ps -q -f name=whats-webhostpro)" ]; then
-    run_with_spinner "docker stop whats-webhostpro >/dev/null 2>&1" "Parando contêiner Docker existente"
-    run_with_spinner "docker rm whats-webhostpro >/dev/null 2>&1" "Removendo contêiner Docker existente"
-fi
-
-# Executa o comando Docker com os parâmetros fornecidos pelo usuário
-show_progress "Executando o contêiner Docker"
-docker run -d \
-    --name whats-webhostpro \
-    --restart always \
-    -p "$PORT":8080 \
-    -e AUTHENTICATION_API_KEY="$AUTHENTICATION_API_KEY" \
-    -v evolution_store:/evolution/store \
-    -v evolution_instances:/evolution/instances \
-    atendai/evolution-api >/dev/null 2>&1 &
-pid=$!
-show_spinner $pid
-wait $pid
-if [ $? -ne 0 ]; then
-    exit_with_error "Falha ao executar o contêiner Docker"
+if [ "$(docker ps -q -f name=evolution_api)" ]; then
+    run_with_spinner "docker stop evolution_api >/dev/null 2>&1" "Parando contêiner Docker existente"
+    run_with_spinner "docker rm evolution_api >/dev/null 2>&1" "Removendo contêiner Docker existente"
 fi
 
 # Verifica se o aplicativo PM2 já está em execução e remove-o
@@ -170,6 +153,24 @@ sed -i "s|^API_ENDPOINT=.*|API_ENDPOINT=http://localhost:${PORT}|" .env
 run_with_spinner "npm install >/dev/null 2>&1" "Instalando dependências"
 run_with_spinner "npm run build >/dev/null 2>&1" "Construindo aplicação"
 run_with_spinner "npm start >/dev/null 2>&1" "Iniciando aplicação"
+
+cd evolution || exit_with_error "Falha ao acessar diretório do repositório"
+
+# Modifica o arquivo docker-compose.yml com a porta fornecida pelo usuário
+show_progress "Modificando docker-compose.yml"
+sed -i "s|8080:8080|$PORT:8080|" docker-compose.yml || exit_with_error "Falha ao modificar o docker-compose.yml"
+
+# Renomeia o arquivo exemple.env para .env
+run_with_spinner "mv exemple.env .env" "Renomeando exemple.env para .env"
+
+# Adiciona a AUTHENTICATION_API_KEY no arquivo .env
+show_progress "Adicionando AUTHENTICATION_API_KEY no arquivo .env"
+echo "AUTHENTICATION_API_KEY=${AUTHENTICATION_API_KEY}" >> .env
+
+# Executa o Docker Compose para subir o contêiner
+show_progress "Iniciando contêiner com Docker Compose"
+docker-compose up -d >/dev/null 2>&1
+
 
 echo "------------------------------------------"
 echo "- Instalação concluída e aplicação iniciada"
