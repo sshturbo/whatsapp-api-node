@@ -83,6 +83,15 @@ else
     show_progress "Docker já está instalado"
 fi
 
+# Verifica se o Docker Compose está instalado
+if ! command_exists docker-compose; then
+    run_with_spinner "sudo apt install -y curl >/dev/null 2>&1" "Instalando curl (necessário para o Docker Compose)"
+    run_with_spinner "sudo curl -L 'https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -oP '(?<=\"tag_name\": \").*?(?=\")')/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose" "Baixando Docker Compose"
+    run_with_spinner "sudo chmod +x /usr/local/bin/docker-compose" "Aplicando permissões ao Docker Compose"
+else
+    show_progress "Docker Compose já está instalado"
+fi
+
 # Verifica se o Node.js versão 20 está instalado
 if ! node --version | grep -q "v20"; then
     run_with_spinner "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - >/dev/null 2>&1" "Configurando repositório do Node.js"
