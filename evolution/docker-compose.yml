@@ -10,6 +10,12 @@ services:
       - .env
     volumes:
       - evolution_instances:/evolution/instances
+    networks:
+      - evolution-net  # Usa a mesma rede que MySQL e Redis
 
 volumes:
   evolution_instances:
+
+networks:
+  evolution-net:
+    external: true 
