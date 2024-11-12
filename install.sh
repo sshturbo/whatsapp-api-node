@@ -177,8 +177,18 @@ run_with_spinner "mv exemple.env .env" "Renomeando exemple.env para .env"
 show_progress "Adicionando AUTHENTICATION_API_KEY no arquivo .env"
 echo "AUTHENTICATION_API_KEY=${AUTHENTICATION_API_KEY}" >> .env
 
+cd mysql || exit_with_error "Falha ao acessar diretório do repositório"
+show_progress "Iniciando contêiner do MySQL"
+docker-compose up -d >/dev/null 2>&1
+cd ..
+
+cd redis || exit_with_error "Falha ao acessar diretório do repositório"
+show_progress "Iniciando contêiner do redis"
+docker-compose up -d >/dev/null 2>&1
+cd ..
+
 # Executa o Docker Compose para subir o contêiner
-show_progress "Iniciando contêiner com Docker Compose"
+show_progress "Iniciando contêiner do evolutin"
 docker-compose up -d >/dev/null 2>&1
 
 
