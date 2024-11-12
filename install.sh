@@ -93,7 +93,7 @@ else
 fi
 
 # Verifica se o Node.js versão 20 está instalado
-if ! command -v node &> /dev/null || ! node --version | grep -q "v20"; then
+if ! command -v node &>/dev/null || ! node --version | grep -q "v20"; then
     run_with_spinner "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - >/dev/null 2>&1" "Configurando repositório do Node.js"
     run_with_spinner "sudo apt update >/dev/null 2>&1" "Atualizando o apt"
     run_with_spinner "sudo apt install -y nodejs >/dev/null 2>&1" "Instalando Node.js"
@@ -131,22 +131,25 @@ while true; do
     fi
 done
 
-# Verifica se o contêiner Docker já está em execução e remove-o
+# Verifica se o contêiner Docker já está em execução e remove-o, incluindo volumes
 if [ "$(docker ps -q -f name=evolution_v2)" ]; then
     run_with_spinner "docker stop evolution_v2 >/dev/null 2>&1" "Parando contêiner evolution_v2 existente"
-    run_with_spinner "docker rm evolution_v2 >/dev/null 2>&1" "Removendo contêiner evolution_v2 existente"
+    run_with_spinner "docker rm -v evolution_v2 >/dev/null 2>&1" "Removendo contêiner evolution_v2 existente e seu volume"
 fi
+
 if [ "$(docker ps -q -f name=pgadmin)" ]; then
     run_with_spinner "docker stop pgadmin >/dev/null 2>&1" "Parando contêiner pgadmin existente"
-    run_with_spinner "docker rm pgadmin >/dev/null 2>&1" "Removendo contêiner pgadmin existente"
+    run_with_spinner "docker rm -v pgadmin >/dev/null 2>&1" "Removendo contêiner pgadmin existente e seu volume"
 fi
+
 if [ "$(docker ps -q -f name=postgres_db)" ]; then
     run_with_spinner "docker stop postgres_db >/dev/null 2>&1" "Parando contêiner postgres_db existente"
-    run_with_spinner "docker rm postgres_db >/dev/null 2>&1" "Removendo contêiner postgres_db existente"
+    run_with_spinner "docker rm -v postgres_db >/dev/null 2>&1" "Removendo contêiner postgres_db existente e seu volume"
 fi
+
 if [ "$(docker ps -q -f name=redis_service)" ]; then
     run_with_spinner "docker stop redis_service >/dev/null 2>&1" "Parando contêiner redis_service existente"
-    run_with_spinner "docker rm redis_service >/dev/null 2>&1" "Removendo contêiner redis_service existente"
+    run_with_spinner "docker rm -v redis_service >/dev/null 2>&1" "Removendo contêiner redis_service existente e seu volume"
 fi
 
 # Verifica se o aplicativo PM2 já está em execução e remove-o
