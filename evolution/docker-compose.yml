@@ -11,7 +11,7 @@ services:
     volumes:
       - evolution_instances:/evolution/instances
     networks:
-      - evolution-net  # Usa a mesma rede que MySQL e Redis
+      - evolution-net
 
 volumes:
   evolution_instances:
