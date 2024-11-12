@@ -208,11 +208,10 @@ docker-compose up -d >/dev/null 2>&1
 
 IPV4=$(curl -s https://api.ipify.org)
 
-echo "------------------------------------------"
+echo -e "\n------------------------------------------"
 echo "- Instalação concluída e aplicação iniciada"
-echo""
-echo"URL da api evolution: http:$IPV4:$PORT"
-echo"URL da documentação da evolution: https://doc.evolution-api.com/v2/api-reference/get-information"
-echo"URL da Painel de gerenciamento: http:$IPV4:21468"
-echo""
+echo -e "\nURL da api evolution: http://$IPV4:$PORT"
+echo "URL da documentação da evolution: https://doc.evolution-api.com/v2/api-reference/get-information"
+echo "URL do Painel de gerenciamento: http://$IPV4:21468"
 echo "------------------------------------------"
+
