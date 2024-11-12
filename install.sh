@@ -86,7 +86,7 @@ fi
 # Verifica se o Docker Compose está instalado
 if ! command_exists docker-compose; then
     run_with_spinner "sudo apt install -y curl >/dev/null 2>&1" "Instalando curl (necessário para o Docker Compose)"
-    run_with_spinner "sudo curl -L 'https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -oP '(?<=\"tag_name\": \").*?(?=\")')/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose" "Baixando Docker Compose"
+    run_with_spinner "sudo curl -L 'https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -oP '(?<=\"tag_name\": \").*?(?=\")[...] 
     run_with_spinner "sudo chmod +x /usr/local/bin/docker-compose" "Aplicando permissões ao Docker Compose"
 else
     show_progress "Docker Compose já está instalado"
@@ -101,7 +101,6 @@ if ! command -v node &> /dev/null || ! node --version | grep -q "v20"; then
 else
     show_progress "Node.js 20 e PM2 já estão instalados"
 fi
-
 
 # Verifica e instala o utilitário unzip se necessário
 if ! command_exists unzip; then
@@ -204,7 +203,7 @@ sed -i "s|SERVER_URL=http://localhost:8080|SERVER_URL=http://localhost:$PORT|" d
 
 # Adiciona a DATABASE_CONNECTION_URI no arquivo docker-compose.yml
 show_progress "Adicionando DATABASE_CONNECTION_URI no arquivo docker-compose.yml"
-sed -i "s|DATABASE_CONNECTION_URI=postgresql://postgres:cb8c87193f183f91a16e6eb697ca84ec@postgres_db:5432/evolution|DATABASE_CONNECTION_URI=postgresql://postgres:${AUTHENTICATION_API_KEY}@postgres_db:5432/evolution|" docker-compose.yml || exit_with_error "Falha ao modificar o docker-compose.yml"
+sed -i "s|DATABASE_CONNECTION_URI=postgresql://postgres:cb8c87193f183f91a16e6eb697ca84ec@postgres_db:5432/evolution|DATABASE_CONNECTION_URI=postgresql://postgres:${AUTHENTICATION_API_KEY}@postgres_db:[...]
 
 # Executa o Docker Compose para subir o contêiner
 show_progress "Iniciando contêiner do evolutin"
@@ -218,4 +217,3 @@ echo -e "\nURL da api evolution: http://$IPV4:$PORT"
 echo "URL da documentação da evolution: https://doc.evolution-api.com/v2/api-reference/get-information"
 echo "URL do Painel de gerenciamento: http://$IPV4:21468"
 echo "------------------------------------------"
-
