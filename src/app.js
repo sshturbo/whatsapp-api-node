@@ -30,7 +30,7 @@ const initDb = () => {
         console.log('Conectado ao banco de dados SQLite.');
 
         db.serialize(() => {
-            
+
             db.run(`
                 CREATE TABLE IF NOT EXISTS accounts (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,7 +41,7 @@ const initDb = () => {
                 )
             `);
 
-           
+
             db.run(`
                 CREATE TABLE IF NOT EXISTS whatsapp (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -117,7 +117,7 @@ app.post('/login', (req, res) => {
             return res.redirect('/?tipo=erro&msg=Email%20ou%20senha%20incorretos.');
         }
 
-       
+
         const match = await bcrypt.compare(senha, row.senha);
         if (!match) {
             return res.redirect('/?tipo=erro&msg=Email%20ou%20senha%20incorretos.');
@@ -172,7 +172,7 @@ app.post('/cadastrar', async (req, res) => {
                 }
                 return res.redirect('/cadastrar?tipo=erro&msg=Erro%20ao%20cadastrar%20usu%C3%A1rio.');
             }
-            res.redirect('/cadastrar?tipo=sucesso&msg=Usu%C3%A1rio%20cadastrado%20com%20sucesso!'); 
+            res.redirect('/cadastrar?tipo=sucesso&msg=Usu%C3%A1rio%20cadastrado%20com%20sucesso!');
         });
     } catch (err) {
         res.redirect('/cadastrar?tipo=erro&msg=Erro%20ao%20cadastrar%20usu%C3%A1rio.');
@@ -182,9 +182,9 @@ app.post('/cadastrar', async (req, res) => {
 });
 
 app.get('/home', verificarSessao, (req, res) => {
-    
+
     if (!req.session.usuario) {
-        return res.redirect('/'); 
+        return res.redirect('/');
     }
 
     const { nome, email, nivel } = req.session.usuario;
@@ -197,7 +197,7 @@ app.get('/sessoes', verificarSessao, (req, res) => {
     if (!req.session.usuario) {
         return res.redirect('/');
     }
-    
+
     const { nome, email, nivel } = req.session.usuario;
 
     res.render('sessoes', { nome, email, nivel });
@@ -219,7 +219,7 @@ app.get('/sair', (req, res) => {
         if (err) {
             return res.status(500).send('Erro ao encerrar sessão.');
         }
-        res.redirect('/'); 
+        res.redirect('/');
     });
 });
 
@@ -266,7 +266,7 @@ app.get('/estatisticas', verificarSessao, (req, res) => {
     const { id } = req.session.usuario;
 
     let estatisticas = {};
-    
+
     db.get(`
         SELECT COUNT(*) AS quantidadeUsuarios
         FROM accounts
@@ -331,7 +331,7 @@ app.post('/atualizar', verificarSessao, async (req, res) => {
         if (email && !validarEmail(email)) {
             return res.redirect('/perfil?tipo=erro&msg=Email%20inv%C3%A1lido.');
         }
-        
+
         if (senha && !validarSenhaForte(senha)) {
             return res.redirect('/perfil?tipo=erro&msg=A%20senha%20deve%20ter%20pelo%20menos%208%20caracteres%2C%20uma%20letra%20mai%C3%BAscula%2C%20uma%20letra%20min%C3%BAscula%2C%20um%20n%C3%BAmero%20e%20um%20caractere%20especial.');
         }
@@ -434,17 +434,26 @@ app.post('/criar-instancia-whatsapp', verificarSessao, async (req, res) => {
         }
 
         const nomeInstancia = `instancia_${Math.random().toString(36).substring(7)}`;
-        
+
         const token = gerarToken();
 
-        
+
         const status = 'desconectado';
 
-    
+
         const body = {
             number: numero,
             token: token,
-            instanceName: nomeInstancia
+            instanceName: nomeInstancia,
+            syncFullHistory: true,
+            readStatus: true,
+            readMessages: true,
+            alwaysOnline: true,
+            groupsIgnore: false,
+            reject_call: false,
+            alwaysOnline: true,
+            integration: 'WHATSAPP-BAILEYS',
+            qrcode: true
         };
 
         const options = {
@@ -499,7 +508,7 @@ app.post('/conectar-whatsapp', verificarSessao, async (req, res) => {
         if (instance && instance.state === 'open') {
             return res.json({ message: 'WhatsApp já foi conectado com sucesso!' });
         }
-        
+
         const { pairingCode, base64 } = data;
 
         const base64WithoutPrefix = base64.replace(/^data:image\/png;base64,/, '');
@@ -527,7 +536,7 @@ app.post('/verificar-conexao-whatsapp', verificarSessao, async (req, res) => {
     try {
         const response = await fetch(url, options);
         const data = await response.json();
-        
+
         const { instance } = data;
         if (!instance) {
             return res.status(404).json({ error: 'Instância não encontrada.' });
@@ -589,12 +598,12 @@ app.post('/excluir-instancia-whatsapp', verificarSessao, async (req, res) => {
         console.log('Resposta do logout:', dataLogout);
 
         if ((responseLogout.status === 404 || responseLogout.status === 400) && dataLogout.error === 'Bad Request' && dataLogout.response && dataLogout.response.message.includes("is not connected")) {
-           
+
         } else if (!responseLogout.ok && responseLogout.status !== 404 && responseLogout.status !== 400) {
-          
+
             throw new Error('Erro ao fazer logout da instância do WhatsApp.');
         }
-        
+
         if ((responseLogout.status !== 404 && responseLogout.status !== 400) || dataLogout.response.message.includes("is not connected")) {
             const urlExcluir = `${process.env.API_ENDPOINT}/instance/delete/${instancia}`;
             const responseExcluir = await fetch(urlExcluir, optionsExcluir);
@@ -602,7 +611,7 @@ app.post('/excluir-instancia-whatsapp', verificarSessao, async (req, res) => {
 
             console.log('Resposta da exclusão:', dataExcluir);
 
-        
+
             if (!responseExcluir.ok) {
                 throw new Error('Erro ao excluir instância do WhatsApp.');
             }
