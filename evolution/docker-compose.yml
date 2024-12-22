@@ -66,7 +66,7 @@ services:
 
   # Serviço Evolution API
   evolution_v2:
-    image: atendai/evolution-api:v2.1.1-homolog  # Versão da Evolution API
+    image: atendai/evolution-api:v2.1.1  # Versão da Evolution API
     container_name: evolution_v2
     volumes:
       - evolution_instancesv2:/evolution/instances  # Volume para persistência de dados da Evolution
