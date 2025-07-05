@@ -92,6 +92,8 @@ services:
       - CONFIG_SESSION_PHONE_CLIENT=InovaBoost
       - CONFIG_SESSION_PHONE_NAME=chrome
       - CONFIG_SESSION_PHONE_VERSION=2.3000.1015901307
+      - WEBSOCKET_ENABLED=true
+      - WEBSOCKET_GLOBAL_EVENTS=false
 
       # Configurações do WhatsApp Business Cloud (API Oficial)
       - WA_BUSINESS_TOKEN_WEBHOOK=evolution
