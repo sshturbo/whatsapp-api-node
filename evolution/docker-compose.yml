@@ -48,7 +48,7 @@ services:
 
   # Serviço Evolution API
   evolution_v2:
-    image: atendai/evolution-api-lite:latest
+    image: evoapicloud/evolution-api:latest
     container_name: evolution_v2
     volumes:
       - evolution_instancesv2:/evolution/instances  
