@@ -32,7 +32,7 @@ services:
     container_name: postgres_db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: cb8c87193f183f91a16e6eb697ca84ec  # Altere para uma senha segura
+      POSTGRES_PASSWORD: a076c914af55d544fbf529032ed07197f91499008488c8af07550fe467376829  # Altere para uma senha segura
     ports:
       - "5432:5432"  # Porta padrão do PostgreSQL
     volumes:
@@ -46,30 +46,12 @@ services:
           memory: 1024M
           cpus: "0.5"
 
-  # Serviço pgAdmin
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@gmail.com  # Altere para o seu e-mail
-      PGADMIN_DEFAULT_PASSWORD: cb8c87193f183f91a16e6eb697ca84ec  # Altere para uma senha segura
-    ports:
-      - "5433:80"  # Porta para acessar o pgAdmin
-    networks:
-      - rede_geral
-    restart: always
-    deploy:
-      resources:
-        limits:
-          memory: 1024M
-          cpus: "0.5"
-
   # Serviço Evolution API
   evolution_v2:
-    image: atendai/evolution-api:v2.2.0 # Versão da Evolution API
+    image: atendai/evolution-api-lite:latest
     container_name: evolution_v2
     volumes:
-      - evolution_instancesv2:/evolution/instances  # Volume para persistência de dados da Evolution
+      - evolution_instancesv2:/evolution/instances  
     networks:
       - rede_geral  # Usando a rede geral
     ports:
@@ -84,16 +66,16 @@ services:
 
       # Dados de Autenticação
       - AUTHENTICATION_TYPE=apikey
-      - AUTHENTICATION_API_KEY=cb8c87193f183f91a16e6eb697ca84ec
+      - AUTHENTICATION_API_KEY=a076c914af55d544fbf529032ed07197f91499008488c8af07550fe467376829
       - AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES=true
 
       # Configurações gerais
       - LANGUAGE=pt-BR
-      - CONFIG_SESSION_PHONE_CLIENT=InovaBoost
+      - CONFIG_SESSION_PHONE_CLIENT=WEBPRO
       - CONFIG_SESSION_PHONE_NAME=chrome
-      - CONFIG_SESSION_PHONE_VERSION=2.3000.1015901307
+      - CONFIG_SESSION_PHONE_VERSION=2.3000.1020885143
       - WEBSOCKET_ENABLED=true
-      - WEBSOCKET_GLOBAL_EVENTS=false
+      - WEBSOCKET_GLOBAL_EVENTS=true
 
       # Configurações do WhatsApp Business Cloud (API Oficial)
       - WA_BUSINESS_TOKEN_WEBHOOK=evolution
@@ -108,7 +90,7 @@ services:
       # Configurações do Banco de Dados PostgreSQL
       - DATABASE_ENABLED=true
       - DATABASE_PROVIDER=postgresql
-      - DATABASE_CONNECTION_URI=postgresql://postgres:cb8c87193f183f91a16e6eb697ca84ec@postgres_db:5432/evolution
+      - DATABASE_CONNECTION_URI=postgresql://postgres:a076c914af55d544fbf529032ed07197f91499008488c8af07550fe467376829@postgres_db:5432/evolution
       - DATABASE_CONNECTION_CLIENT_NAME=evolution
       - DATABASE_SAVE_DATA_INSTANCE=true
       - DATABASE_SAVE_DATA_NEW_MESSAGE=true
@@ -150,7 +132,7 @@ services:
       - CHATWOOT_ENABLED=false
       - CHATWOOT_MESSAGE_READ=true
       - CHATWOOT_MESSAGE_DELETE=true
-      - CHATWOOT_IMPORT_DATABASE_CONNECTION_URI=postgresql://postgres:cb8c87193f183f91a16e6eb697ca84ec@postgres_db:5432/chatwoot?sslmode=disable
+      - CHATWOOT_IMPORT_DATABASE_CONNECTION_URI=postgresql://postgres:a076c914af55d544fbf529032ed07197f91499008488c8af07550fe467376829@postgres_db:5432/chatwoot?sslmode=disable
       - CHATWOOT_IMPORT_PLACEHOLDER_MEDIA_MESSAGE=false
 
       # Configuração do RabbitMQ (Desativado por padrão)
